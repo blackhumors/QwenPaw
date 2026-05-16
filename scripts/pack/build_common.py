@@ -121,16 +121,17 @@ def main() -> int:
 
     conda = _conda_exe()
     try:
+        # `make` only exists on osx/linux conda channels; skip on Windows.
+        create_pkgs = [f"python={args.python}", "pip", "cmake"]
+        if sys.platform != "win32":
+            create_pkgs.append("make")
         _run(
             [
                 conda,
                 "create",
                 "-n",
                 env_name,
-                f"python={args.python}",
-                "pip",
-                "cmake",
-                "make",
+                *create_pkgs,
                 "-y",
             ],
         )
