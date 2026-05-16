@@ -1,0 +1,171 @@
+name: Build Release Installers
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  build-windows:
+    name: Build Windows installer (.exe)
+    runs-on: windows-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          activate-environment: ''
+          auto-activate-base: true
+
+      - name: Install NSIS
+        shell: pwsh
+        run: |
+          choco install nsis -y --no-progress
+          $nsisDir = "C:\Program Files (x86)\NSIS"
+          if (Test-Path $nsisDir) {
+            "$nsisDir" | Out-File -FilePath $env:GITHUB_PATH -Append
+          }
+
+      - name: Verify toolchain
+        shell: pwsh
+        run: |
+          node --version
+          npm --version
+          conda --version
+          makensis /VERSION
+
+      - name: Build console (frontend)
+        shell: pwsh
+        working-directory: console
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Build Windows installer
+        shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+        run: .\scripts\pack\build_win.ps1
+
+      - name: Locate installer
+        id: locate
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path dist -Filter "QwenPaw-Setup-*.exe" |
+            Select-Object -First 1
+          if (-not $exe) { throw "No installer produced under dist/" }
+          "exe_path=$($exe.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          Write-Host "Built: $($exe.FullName)"
+          Write-Host "Size: $([Math]::Round($exe.Length / 1MB, 1)) MB"
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: QwenPaw-Windows-Installer
+          path: ${{ steps.locate.outputs.exe_path }}
+          retention-days: 14
+
+      - name: Attach to release on tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.locate.outputs.exe_path }}
+
+  build-macos:
+    name: Build macOS DMG (.dmg)
+    runs-on: macos-14
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          activate-environment: ''
+          auto-activate-base: true
+
+      - name: Verify toolchain
+        shell: bash -el {0}
+        run: |
+          node --version
+          npm --version
+          conda --version
+          which hdiutil
+          uname -m
+
+      - name: Build console (frontend)
+        shell: bash -el {0}
+        working-directory: console
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Build macOS .app bundle
+        shell: bash -el {0}
+        run: |
+          bash scripts/pack/build_macos.sh
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          ver=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
+            src/qwenpaw/__version__.py)
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+          echo "Version: $ver"
+
+      - name: Create DMG
+        shell: bash
+        run: |
+          set -e
+          ver="${{ steps.version.outputs.version }}"
+          arch=$(uname -m)
+          dmg="dist/QwenPaw-${ver}-macOS-${arch}.dmg"
+
+          # Build a folder containing the .app and an Applications symlink
+          stage=$(mktemp -d)
+          cp -R dist/QwenPaw.app "$stage/"
+          ln -s /Applications "$stage/Applications"
+
+          hdiutil create \
+            -volname "QwenPaw ${ver}" \
+            -srcfolder "$stage" \
+            -ov \
+            -format UDZO \
+            -fs HFS+ \
+            "$dmg"
+
+          ls -lh "$dmg"
+          echo "dmg_path=$dmg" >> "$GITHUB_OUTPUT"
+        id: dmg
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: QwenPaw-macOS-DMG
+          path: ${{ steps.dmg.outputs.dmg_path }}
+          retention-days: 14
+
+      - name: Attach to release on tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.dmg.outputs.dmg_path }}
