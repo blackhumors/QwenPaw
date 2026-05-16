@@ -2,8 +2,15 @@ name: Build Release Installers
 
 on:
   workflow_dispatch:
+    inputs:
+      include_macos:
+        description: 'Build macOS DMGs (arm64 + x86_64)'
+        type: boolean
+        default: true
   push:
-    tags: ['v*']
+    tags:
+      - 'v*'        # Windows + macOS
+      - 'win-v*'    # Windows only (skips macOS)
 
 jobs:
   build-windows:
@@ -88,7 +95,9 @@ jobs:
 
   build-macos:
     name: Build macOS DMG (${{ matrix.arch }})
-    if: "!startsWith(github.ref, 'refs/tags/v')"
+    if: |
+      (github.event_name == 'workflow_dispatch' && inputs.include_macos) ||
+      (startsWith(github.ref, 'refs/tags/v') && !startsWith(github.ref, 'refs/tags/win-v'))
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
     env:
