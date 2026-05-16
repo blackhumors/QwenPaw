@@ -47,6 +47,8 @@ jobs:
       - name: Build console (frontend)
         shell: pwsh
         working-directory: console
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: |
           npm install --no-audit --no-fund
           npm run build
@@ -122,6 +124,8 @@ jobs:
       - name: Build console (frontend)
         shell: bash -el {0}
         working-directory: console
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: |
           npm install --no-audit --no-fund
           npm run build
