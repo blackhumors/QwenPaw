@@ -82,9 +82,17 @@ jobs:
           files: ${{ steps.locate.outputs.exe_path }}
 
   build-macos:
-    name: Build macOS DMG (.dmg)
-    runs-on: macos-14
+    name: Build macOS DMG (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-14
+            arch: arm64
+          - runner: macos-13
+            arch: x86_64
 
     steps:
       - name: Checkout
@@ -160,7 +168,7 @@ jobs:
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
-          name: QwenPaw-macOS-DMG
+          name: QwenPaw-macOS-${{ matrix.arch }}-DMG
           path: ${{ steps.dmg.outputs.dmg_path }}
           retention-days: 14
 
