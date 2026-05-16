@@ -12,6 +12,9 @@ on:
       - 'v*'        # Windows + macOS
       - 'win-v*'    # Windows only (skips macOS)
 
+permissions:
+  contents: write   # Required for softprops/action-gh-release to create Releases
+
 jobs:
   build-windows:
     name: Build Windows installer (.exe)
