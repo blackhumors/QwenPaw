@@ -8,6 +8,7 @@ import ConsolePollService from "../../components/ConsolePollService";
 import { ChunkErrorBoundary } from "../../components/ChunkErrorBoundary";
 import { lazyImportWithRetry } from "../../utils/lazyWithRetry";
 import { usePlugins } from "../../plugins/PluginContext";
+import { useDeveloperMode } from "../../contexts/DeveloperModeContext";
 import styles from "../index.module.less";
 
 // Chat is eagerly loaded (default landing page)
@@ -76,6 +77,7 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
   const { pluginRoutes } = usePlugins();
+  const { developerMode } = useDeveloperMode();
 
   // Resolve selected key: check static routes first, then plugin routes
   let selectedKey = pathToKey[currentPath] || "";
@@ -92,7 +94,7 @@ export default function MainLayout() {
     <Layout className={styles.mainLayout}>
       <Header />
       <Layout>
-        <Sidebar selectedKey={selectedKey} />
+        {developerMode && <Sidebar selectedKey={selectedKey} />}
         <Content className="page-container">
           <ConsolePollService />
           <div className="page-content">

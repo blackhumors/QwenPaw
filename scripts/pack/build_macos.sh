@@ -21,18 +21,30 @@ if [[ -f "${VERSION_FILE}" ]]; then
       "${VERSION_FILE}" 2>/dev/null
   )"
 fi
+
+# Clean previous build artifacts so each run starts from a known state.
+# Set SKIP_CLEAN=1 to skip (e.g. when wheel was just built by an outer script).
+if [[ -z "${SKIP_CLEAN}" ]]; then
+  echo "== Cleaning previous build artifacts in ${DIST}/ =="
+  shopt -s nullglob
+  stale=(
+    "${REPO_ROOT}/${DIST}/qwenpaw-"*.whl
+    "${REPO_ROOT}/${DIST}/qwenpaw-"*.tar.gz
+    "${REPO_ROOT}/${DIST}/qwenpaw-env."*
+  )
+  if [[ ${#stale[@]} -gt 0 ]]; then
+    rm -f "${stale[@]}"
+  fi
+  rm -rf "${REPO_ROOT}/${DIST}/${APP_NAME}.app"
+  shopt -u nullglob
+fi
+
 if [[ -n "${CURRENT_VERSION}" ]]; then
   shopt -s nullglob
-  whls=("${REPO_ROOT}/dist/qwenpaw-${CURRENT_VERSION}-"*.whl)
+  whls=("${REPO_ROOT}/${DIST}/qwenpaw-${CURRENT_VERSION}-"*.whl)
   if [[ ${#whls[@]} -gt 0 ]]; then
     echo "dist/ already has wheel for version ${CURRENT_VERSION}, skipping."
   else
-    # Clean up old wheels to avoid confusion
-    old_whls=("${REPO_ROOT}/dist/qwenpaw-"*.whl)
-    if [[ ${#old_whls[@]} -gt 0 ]]; then
-      echo "Removing old wheel files: ${old_whls[*]}"
-      rm -f "${old_whls[@]}"
-    fi
     bash scripts/wheel_build.sh
   fi
 else

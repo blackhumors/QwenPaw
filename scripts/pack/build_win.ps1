@@ -31,6 +31,24 @@ if (Test-Path $VersionFile) {
   $m = (Get-Content $VersionFile -Raw) -match '__version__\s*=\s*"([^"]+)"'
   if ($m) { $CurrentVersion = $Matches[1] }
 }
+
+# Clean previous build artifacts so each run starts from a known state.
+# Set $env:SKIP_CLEAN=1 to skip (e.g. when wheel was just built by an outer script).
+if (-not $env:SKIP_CLEAN) {
+  Write-Host "== Cleaning previous build artifacts in $Dist =="
+  $stalePatterns = @(
+    (Join-Path $Dist "qwenpaw-*.whl"),
+    (Join-Path $Dist "qwenpaw-*.tar.gz"),
+    (Join-Path $Dist "qwenpaw-env.*")
+  )
+  foreach ($pat in $stalePatterns) {
+    Get-ChildItem -Path $pat -ErrorAction SilentlyContinue | Remove-Item -Force
+  }
+  if (Test-Path $Unpacked) { Remove-Item -Recurse -Force $Unpacked }
+  Get-ChildItem -Path (Join-Path $Dist "QwenPaw-Setup-*.exe") -ErrorAction SilentlyContinue |
+    Remove-Item -Force
+}
+
 $RunWheelBuild = $true
 if ($CurrentVersion) {
   $wheelGlob = Join-Path $Dist "qwenpaw-$CurrentVersion-*.whl"
@@ -38,13 +56,6 @@ if ($CurrentVersion) {
   if ($existingWheels.Count -gt 0) {
     Write-Host "dist/ already has wheel for version $CurrentVersion, skipping."
     $RunWheelBuild = $false
-  } else {
-    # Clean up old wheels to avoid confusion
-    $oldWheels = Get-ChildItem -Path (Join-Path $Dist "qwenpaw-*.whl") -ErrorAction SilentlyContinue
-    if ($oldWheels.Count -gt 0) {
-      Write-Host "Removing old wheel files: $($oldWheels | ForEach-Object { $_.Name })"
-      $oldWheels | Remove-Item -Force
-    }
   }
 }
 if ($RunWheelBuild) {
