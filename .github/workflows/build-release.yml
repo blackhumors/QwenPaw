@@ -59,6 +59,7 @@ jobs:
         shell: pwsh
         env:
           PYTHONIOENCODING: utf-8
+          SKIP_CONSOLE_BUILD: '1'
         run: .\scripts\pack\build_win.ps1
 
       - name: Locate installer
@@ -136,6 +137,8 @@ jobs:
 
       - name: Build macOS .app bundle
         shell: bash -el {0}
+        env:
+          SKIP_CONSOLE_BUILD: '1'
         run: |
           bash scripts/pack/build_macos.sh
 

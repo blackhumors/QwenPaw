@@ -10,8 +10,12 @@ CONSOLE_DIR="$REPO_ROOT/console"
 CONSOLE_DEST="$REPO_ROOT/src/qwenpaw/console"
 
 echo "[wheel_build] Building console frontend..."
-(cd "$CONSOLE_DIR" && npm ci)
-(cd "$CONSOLE_DIR" && npm run build)
+if [[ -n "${SKIP_CONSOLE_BUILD}" && -d "$CONSOLE_DIR/dist" ]]; then
+  echo "[wheel_build] SKIP_CONSOLE_BUILD set and console/dist exists, reusing prebuilt frontend."
+else
+  (cd "$CONSOLE_DIR" && npm install --no-audit --no-fund)
+  (cd "$CONSOLE_DIR" && npm run build)
+fi
 
 echo "[wheel_build] Copying console/dist/* -> src/qwenpaw/console/..."
 rm -rf "$CONSOLE_DEST"/*

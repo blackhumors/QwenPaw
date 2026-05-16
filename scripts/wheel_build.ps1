@@ -9,14 +9,18 @@ $ConsoleDir = Join-Path $RepoRoot "console"
 $ConsoleDest = Join-Path $RepoRoot "src\qwenpaw\console"
 
 Write-Host "[wheel_build] Building console frontend..."
-Push-Location $ConsoleDir
-try {
-  npm ci
-  if ($LASTEXITCODE -ne 0) { throw "npm ci failed with exit code $LASTEXITCODE" }
-  npm run build
-  if ($LASTEXITCODE -ne 0) { throw "npm run build failed with exit code $LASTEXITCODE" }
-} finally {
-  Pop-Location
+if ($env:SKIP_CONSOLE_BUILD -and (Test-Path (Join-Path $ConsoleDir "dist"))) {
+  Write-Host "[wheel_build] SKIP_CONSOLE_BUILD set and console/dist exists, reusing prebuilt frontend."
+} else {
+  Push-Location $ConsoleDir
+  try {
+    npm install --no-audit --no-fund
+    if ($LASTEXITCODE -ne 0) { throw "npm install failed with exit code $LASTEXITCODE" }
+    npm run build
+    if ($LASTEXITCODE -ne 0) { throw "npm run build failed with exit code $LASTEXITCODE" }
+  } finally {
+    Pop-Location
+  }
 }
 
 Write-Host "[wheel_build] Copying console/dist/* -> src/qwenpaw/console/..."
