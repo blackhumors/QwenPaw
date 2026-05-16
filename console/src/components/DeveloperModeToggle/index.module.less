@@ -1,0 +1,53 @@
+/* ---- Developer mode toggle button ---- */
+.toggleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  color: rgba(0, 0, 0, 0.65);
+  padding: 0;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(97, 92, 237, 0.08);
+    color: #ff7f16;
+  }
+}
+
+.toggleBtnActive {
+  color: #ff7f16;
+  background: rgba(255, 127, 22, 0.12);
+
+  &:hover {
+    background: rgba(255, 127, 22, 0.18);
+    color: #ff7f16;
+  }
+}
+
+:global(.dark-mode) {
+  .toggleBtn {
+    color: rgba(255, 255, 255, 0.65);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+  }
+
+  .toggleBtnActive {
+    color: #ff9d4d;
+    background: rgba(255, 157, 77, 0.18);
+
+    &:hover {
+      background: rgba(255, 157, 77, 0.24);
+      color: #ff9d4d;
+    }
+  }
+}

@@ -1,0 +1,84 @@
+name: Build Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          activate-environment: ''
+          auto-activate-base: true
+
+      - name: Install NSIS
+        shell: pwsh
+        run: |
+          choco install nsis -y --no-progress
+          # Ensure makensis is on PATH for subsequent steps
+          $nsisDir = "C:\Program Files (x86)\NSIS"
+          if (Test-Path $nsisDir) {
+            "$nsisDir" | Out-File -FilePath $env:GITHUB_PATH -Append
+          }
+
+      - name: Verify toolchain
+        shell: pwsh
+        run: |
+          node --version
+          npm --version
+          conda --version
+          makensis /VERSION
+
+      - name: Build console (frontend)
+        shell: pwsh
+        working-directory: console
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Build Windows installer
+        shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          .\scripts\pack\build_win.ps1
+
+      - name: Locate installer
+        id: locate
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path dist -Filter "QwenPaw-Setup-*.exe" |
+            Select-Object -First 1
+          if (-not $exe) { throw "No installer produced under dist/" }
+          "exe_path=$($exe.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "exe_name=$($exe.Name)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          Write-Host "Built: $($exe.FullName)"
+          Write-Host "Size: $([Math]::Round($exe.Length / 1MB, 1)) MB"
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: QwenPaw-Windows-Installer
+          path: ${{ steps.locate.outputs.exe_path }}
+          retention-days: 14
+
+      - name: Create release on tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.locate.outputs.exe_path }}
