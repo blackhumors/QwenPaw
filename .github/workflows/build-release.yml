@@ -10,6 +10,8 @@ jobs:
     name: Build Windows installer (.exe)
     runs-on: windows-latest
     timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
 
     steps:
       - name: Checkout
@@ -87,6 +89,8 @@ jobs:
     name: Build macOS DMG (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
     strategy:
       fail-fast: false
       matrix:
