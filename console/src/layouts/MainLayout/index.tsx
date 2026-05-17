@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
 import ConsolePollService from "../../components/ConsolePollService";
+import OnboardingGate from "../../components/OnboardingModal/OnboardingGate";
 import { ChunkErrorBoundary } from "../../components/ChunkErrorBoundary";
 import { lazyImportWithRetry } from "../../utils/lazyWithRetry";
 import { usePlugins } from "../../plugins/PluginContext";
@@ -97,6 +98,7 @@ export default function MainLayout() {
         {developerMode && <Sidebar selectedKey={selectedKey} />}
         <Content className="page-container">
           <ConsolePollService />
+          <OnboardingGate />
           <div className="page-content">
             <ChunkErrorBoundary resetKey={currentPath}>
               <Suspense

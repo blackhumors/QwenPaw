@@ -562,5 +562,18 @@
       "refreshSuccess": "Log disegarkan",
       "copyBackend": "Salin log backend"
     }
+  },
+  "onboarding": {
+    "title": "Selamat datang di QwenPaw",
+    "description": "Untuk memulai, konfigurasikan API key dari penyedia model. DeepSeek direkomendasikan.",
+    "provider": "Penyedia",
+    "model": "Model",
+    "apiKey": "API Key",
+    "submit": "Mulai",
+    "howTo": "Belum punya API key? Dapatkan di:",
+    "success": "Konfigurasi berhasil.",
+    "errorRequired": "Masukkan API key Anda",
+    "errorPrefix": "API key harus dimulai dengan {{prefix}}",
+    "errorGeneric": "Konfigurasi gagal. Periksa key Anda."
   }
 }

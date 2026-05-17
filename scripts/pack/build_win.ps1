@@ -199,7 +199,7 @@ if defined CERT_FILE (
 )
 
 if not exist "%USERPROFILE%\.qwenpaw\config.json" (
-  "%~dp0python.exe" -u -m qwenpaw init --defaults --accept-security --builtin
+  "%~dp0python.exe" -u -m qwenpaw init --defaults --accept-security
 )
 "%~dp0python.exe" -u -m qwenpaw desktop --log-level %QWENPAW_LOG_LEVEL%
 "@ | Set-Content -Path $LauncherBat -Encoding ASCII
@@ -248,7 +248,7 @@ echo CURL_CA_BUNDLE: %CURL_CA_BUNDLE%
 echo.
 if not exist "%USERPROFILE%\.qwenpaw\config.json" (
   echo [Init] Creating config...
-  "%~dp0python.exe" -u -m qwenpaw init --defaults --accept-security --builtin
+  "%~dp0python.exe" -u -m qwenpaw init --defaults --accept-security
 )
 echo [Launch] Starting QwenPaw Desktop with log-level=%QWENPAW_LOG_LEVEL%...
 echo Press Ctrl+C to stop

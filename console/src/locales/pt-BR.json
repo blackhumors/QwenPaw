@@ -2118,5 +2118,18 @@
     "detailPayload": "Dados",
     "detailExecutionTrace": "Rastro de execução",
     "detailTraceEmpty": "Nenhum rastro de execução disponível"
+  },
+  "onboarding": {
+    "title": "Bem-vindo ao QwenPaw",
+    "description": "Para começar, configure uma API key de um provedor de modelo. DeepSeek é recomendado.",
+    "provider": "Provedor",
+    "model": "Modelo",
+    "apiKey": "API Key",
+    "submit": "Começar",
+    "howTo": "Ainda não tem API key? Obtenha em:",
+    "success": "Configuração concluída.",
+    "errorRequired": "Insira sua API key",
+    "errorPrefix": "API key deve começar com {{prefix}}",
+    "errorGeneric": "Falha na configuração. Verifique sua key."
   }
 }

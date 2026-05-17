@@ -2198,5 +2198,18 @@
     "unknown": "未知",
     "loadFailed": "加载插件列表失败",
     "confirmTitle": "确认卸载"
+  },
+  "onboarding": {
+    "title": "欢迎使用 QwenPaw",
+    "description": "首次使用需要配置一个 AI 模型的 API Key。推荐使用 DeepSeek，价格低、速度快。",
+    "provider": "服务商",
+    "model": "模型",
+    "apiKey": "API Key",
+    "submit": "开始使用",
+    "howTo": "还没有 API Key？前往：",
+    "success": "配置成功，开始聊天吧",
+    "errorRequired": "请输入 API Key",
+    "errorPrefix": "API Key 应以 {{prefix}} 开头",
+    "errorGeneric": "配置失败，请检查 Key 是否正确"
   }
 }

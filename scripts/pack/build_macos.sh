@@ -122,7 +122,7 @@ if [ ! -t 2 ]; then
     exit 1
   fi
   if [ ! -f "$HOME/.qwenpaw/config.json" ]; then
-    "$ENV_DIR/bin/python" -u -m qwenpaw init --defaults --accept-security --builtin
+    "$ENV_DIR/bin/python" -u -m qwenpaw init --defaults --accept-security
   fi
   echo "Launching python with log-level=$LOG_LEVEL..."
   "$ENV_DIR/bin/python" -u -m qwenpaw desktop --log-level "$LOG_LEVEL"
@@ -137,7 +137,7 @@ if [ ! -t 2 ]; then
   exit $EXIT
 fi
 if [ ! -f "$HOME/.qwenpaw/config.json" ]; then
-  "$ENV_DIR/bin/python" -u -m qwenpaw init --defaults --accept-security --builtin
+  "$ENV_DIR/bin/python" -u -m qwenpaw init --defaults --accept-security
 fi
 exec "$ENV_DIR/bin/python" -u -m qwenpaw desktop --log-level "$LOG_LEVEL"
 LAUNCHER

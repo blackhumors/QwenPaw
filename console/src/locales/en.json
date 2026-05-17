@@ -2186,5 +2186,18 @@
     "unknown": "Unknown",
     "loadFailed": "Failed to load plugin list",
     "confirmTitle": "Confirm Uninstall"
+  },
+  "onboarding": {
+    "title": "Welcome to QwenPaw",
+    "description": "To get started, configure an API key for a model provider. DeepSeek is recommended — affordable and fast.",
+    "provider": "Provider",
+    "model": "Model",
+    "apiKey": "API Key",
+    "submit": "Get started",
+    "howTo": "Don't have an API key yet? Get one at:",
+    "success": "Configured. You're all set.",
+    "errorRequired": "Please enter your API key",
+    "errorPrefix": "API key should start with {{prefix}}",
+    "errorGeneric": "Configuration failed. Please verify your key."
   }
 }

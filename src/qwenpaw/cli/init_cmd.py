@@ -344,11 +344,8 @@ def init_cmd(
         import asyncio
         import os
 
-        # 读取内置配置（默认值供开箱即用）
-        builtin_api_key = os.environ.get(
-            "QWENPAW_BUILTIN_API_KEY",
-            "REDACTED",
-        )
+        # 读取内置配置（API Key 从环境变量注入，不在代码里硬编码）
+        builtin_api_key = os.environ.get("QWENPAW_BUILTIN_API_KEY", "")
         builtin_model = os.environ.get("QWENPAW_BUILTIN_MODEL", "deepseek-v4-flash")
         builtin_provider = os.environ.get("QWENPAW_BUILTIN_PROVIDER", "deepseek")
 

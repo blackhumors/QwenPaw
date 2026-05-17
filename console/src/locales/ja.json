@@ -2083,5 +2083,18 @@
     "detailPayload": "追加情報",
     "detailExecutionTrace": "実行トレース",
     "detailTraceEmpty": "実行トレースはありません"
+  },
+  "onboarding": {
+    "title": "QwenPaw へようこそ",
+    "description": "ご利用開始には、AI モデルプロバイダーの API キーを設定してください。DeepSeek をおすすめします。",
+    "provider": "プロバイダー",
+    "model": "モデル",
+    "apiKey": "API キー",
+    "submit": "開始",
+    "howTo": "API キーをお持ちでない場合：",
+    "success": "設定が完了しました。",
+    "errorRequired": "API キーを入力してください",
+    "errorPrefix": "API キーは {{prefix}} で始まる必要があります",
+    "errorGeneric": "設定に失敗しました。キーをご確認ください。"
   }
 }

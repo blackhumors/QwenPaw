@@ -2098,5 +2098,18 @@
     "detailPayload": "Данные",
     "detailExecutionTrace": "Трассировка выполнения",
     "detailTraceEmpty": "Трассировка выполнения недоступна"
+  },
+  "onboarding": {
+    "title": "Добро пожаловать в QwenPaw",
+    "description": "Для начала работы настройте API-ключ провайдера модели. Рекомендуем DeepSeek.",
+    "provider": "Провайдер",
+    "model": "Модель",
+    "apiKey": "API-ключ",
+    "submit": "Начать",
+    "howTo": "Нет API-ключа? Получите здесь:",
+    "success": "Настройка завершена.",
+    "errorRequired": "Введите API-ключ",
+    "errorPrefix": "API-ключ должен начинаться с {{prefix}}",
+    "errorGeneric": "Ошибка настройки. Проверьте ключ."
   }
 }
