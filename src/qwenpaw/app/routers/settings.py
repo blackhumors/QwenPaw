@@ -41,7 +41,7 @@ def _save(data: dict) -> None:
 
 @router.get("/language", summary="Get UI language")
 async def get_language() -> dict:
-    return {"language": _load().get("language", "en")}
+    return {"language": _load().get("language", "zh")}
 
 
 @router.put("/language", summary="Update UI language")
